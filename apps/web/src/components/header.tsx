@@ -2,6 +2,7 @@ import { MusicIcon, Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
 
 const navItems = ["Pricing", "Features", "About", "Blog"];
 
@@ -65,13 +66,22 @@ function MobileMenu({ isOpen }: { isOpen: boolean }) {
   );
 }
 
-export default function Header() {
+type HeaderProps = {
+  isSimple?: boolean;
+};
+
+export function Header({ isSimple = false }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between px-4 py-3 border-b md:px-6 md:h-16 bg-background">
+    <header
+      className={cn(
+        "sticky top-0 z-40 flex flex-wrap items-center justify-between px-4 py-3 border-b md:px-6 md:h-16 bg-background/50 backdrop-blur-md",
+        isSimple ? "bg-background/50 backdrop-blur-md" : "bg-background"
+      )}
+    >
       {/* Logo */}
       <div className="flex items-center gap-2.5">
         <Link to="/" className="flex items-center gap-2.5">
@@ -81,20 +91,28 @@ export default function Header() {
       </div>
 
       {/* Mobile menu toggle */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="md:hidden"
-        onClick={toggleMenu}
-        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-      >
-        {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-      </Button>
+      {!isSimple && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="md:hidden"
+          onClick={toggleMenu}
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        >
+          {isMenuOpen ? (
+            <X className="w-5 h-5" />
+          ) : (
+            <Menu className="w-5 h-5" />
+          )}
+        </Button>
+      )}
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:block">
-        <Navigation />
-      </nav>
+      {!isSimple && (
+        <nav className="hidden md:block">
+          <Navigation />
+        </nav>
+      )}
 
       {/* Desktop Action Buttons */}
       <div className="hidden md:flex md:items-center md:gap-4">
@@ -102,7 +120,7 @@ export default function Header() {
       </div>
 
       {/* Mobile Menu */}
-      <MobileMenu isOpen={isMenuOpen} />
+      {!isSimple && <MobileMenu isOpen={isMenuOpen} />}
     </header>
   );
 }
