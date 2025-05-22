@@ -27,15 +27,21 @@ function Navigation() {
 function ActionButtons() {
   return (
     <>
-      <Button variant="secondary" size="sm" className="w-full md:w-auto">
-        Open Editor
-      </Button>
-      <Button variant="outline" size="sm" className="w-full md:w-auto">
-        Sign In
-      </Button>
-      <Button size="sm" className="w-full md:w-auto">
-        Sign Up
-      </Button>
+      <Link to="/editor">
+        <Button variant="secondary" size="sm" className="w-full md:w-auto">
+          Open Editor
+        </Button>
+      </Link>
+      <Link to="/login">
+        <Button variant="outline" size="sm" className="w-full md:w-auto">
+          Sign In
+        </Button>
+      </Link>
+      <Link to="/login">
+        <Button size="sm" className="w-full md:w-auto">
+          Sign Up
+        </Button>
+      </Link>
     </>
   );
 }

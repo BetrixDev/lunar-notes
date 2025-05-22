@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export function Hero({ className }: { className?: string }) {
   return (
@@ -21,10 +22,12 @@ export function Hero({ className }: { className?: string }) {
             Hero. No downloads required.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button size="lg" className="px-5 font-medium">
-              <span>Start Charting</span>
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <Link to="/editor">
+              <Button size="lg" className="px-5 font-medium">
+                <span>Start Charting</span>
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
             <Button size="lg" variant="outline" className="px-5 font-medium">
               Import Existing Chart
             </Button>
