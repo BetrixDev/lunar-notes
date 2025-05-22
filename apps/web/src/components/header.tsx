@@ -45,17 +45,17 @@ function MobileMenu({ isOpen }: { isOpen: boolean }) {
   const displayClass = isOpen ? "block" : "hidden";
 
   return (
-    <>
-      <nav className={`w-full md:hidden ${displayClass} mt-4`}>
+    <div
+      className={`${displayClass} absolute left-0 right-0 top-[calc(100%+1px)] bg-background/90 backdrop-blur-md z-50 border-b shadow-md px-4 py-3`}
+    >
+      <nav className="w-full md:hidden mt-2">
         <Navigation />
       </nav>
 
-      <div
-        className={`w-full md:hidden ${displayClass} mt-4 flex flex-col items-stretch gap-2`}
-      >
+      <div className="w-full md:hidden mt-4 flex flex-col items-stretch gap-2 pb-3">
         <ActionButtons />
       </div>
-    </>
+    </div>
   );
 }
 
@@ -65,7 +65,7 @@ export default function Header() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <header className="flex flex-wrap items-center justify-between px-4 py-3 border-b md:px-6 md:h-16">
+    <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between px-4 py-3 border-b md:px-6 md:h-16 bg-background">
       {/* Logo */}
       <div className="flex items-center gap-2.5">
         <Link to="/" className="flex items-center gap-2.5">

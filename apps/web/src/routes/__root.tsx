@@ -24,11 +24,12 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
   head: () => ({
     meta: [
       {
-        title: "My App",
+        title: "Lunar Notes",
       },
       {
         name: "description",
-        content: "My App is a web application",
+        content:
+          "Lunar Notes is a powerful, browser-based chart editor for Clone Hero. No downloads required.",
       },
     ],
     links: [
@@ -45,13 +46,11 @@ function RootComponent() {
     select: (s) => s.isLoading,
   });
 
-
   return (
     <>
       <HeadContent />
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div className="grid grid-rows-[auto_1fr] h-svh">
-          <Header />
           {isFetching ? <Loader /> : <Outlet />}
         </div>
         <Toaster richColors />
