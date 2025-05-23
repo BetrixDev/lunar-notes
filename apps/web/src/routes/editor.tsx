@@ -33,6 +33,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+const LANE_COLORS = ["#00ff00", "#ff0000", "#ffff00", "#0066ff", "#ff8800"];
+
 export const Route = createFileRoute("/editor")({
   component: RouteComponent,
 });
@@ -53,13 +55,12 @@ function Highway() {
 }
 
 function Hitzones() {
-  const colors = ["#00ff00", "#ff0000", "#ffff00", "#0066ff", "#ff8800"];
-  const spacing = 1;
-  const startX = -2;
+  const spacing = 0.95;
+  const startX = -1.9;
 
   return (
     <group>
-      {colors.map((color, index) => (
+      {LANE_COLORS.map((color, index) => (
         <mesh
           key={index}
           position={[startX + index * spacing, 0.5, 0]}
@@ -321,7 +322,12 @@ function RouteComponent() {
       </div>
 
       <Canvas>
-        <PerspectiveCamera makeDefault position={[0, 3.2, 4]} fov={90} />
+        <PerspectiveCamera
+          makeDefault
+          position={[0, 3.5, 1.5]}
+          fov={90}
+          rotation={[-Math.PI / 6, 0, 0]}
+        />
         <Stars
           radius={250}
           depth={50}
