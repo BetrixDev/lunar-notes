@@ -50,16 +50,31 @@ function Highway() {
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(1, 10);
 
-  // Move the highway based on current time with speed multipliers
+  // Calculate current highway offset
   const totalSpeedMultiplier = speed * hyperspeed;
-  const zPosition = -48 + currentTime * 10 * totalSpeedMultiplier;
+  const offset = currentTime * 10 * totalSpeedMultiplier;
 
-  return (
-    <mesh position={[0, -0.1, zPosition]} rotation={[-Math.PI / 2, 0, 0]}>
-      <boxGeometry args={[5, 100, 1]} />
-      <meshStandardMaterial map={texture} />
-    </mesh>
-  );
+  // Create multiple highway segments for infinite scrolling
+  const segmentLength = 100;
+  const numberOfSegments = 5;
+  const segments = [];
+
+  for (let i = -2; i < numberOfSegments - 2; i++) {
+    const segmentZ = -48 + i * segmentLength + (offset % segmentLength);
+
+    segments.push(
+      <mesh
+        key={`highway-${i}`}
+        position={[0, -0.1, segmentZ]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      >
+        <boxGeometry args={[5, segmentLength, 1]} />
+        <meshStandardMaterial map={texture} />
+      </mesh>
+    );
+  }
+
+  return <group>{segments}</group>;
 }
 
 function Hitzones() {
