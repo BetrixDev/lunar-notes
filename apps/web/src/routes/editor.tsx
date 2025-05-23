@@ -295,8 +295,7 @@ function SongPropertiesForm() {
 function LeftPanel() {
   return (
     <SidebarProvider>
-      <SidebarTrigger />
-      <Sidebar className="m-4 mt-20 backdrop-blur-sm bg-sidebar/60">
+      <Sidebar className="m-4 mt-20" variant="floating">
         <SidebarContent className="p-4">
           <CollapsibleSection title="Song Properties">
             <SongPropertiesForm />
@@ -337,11 +336,13 @@ function Highway() {
 
 function RouteComponent() {
   return (
-    <div className="w-screen h-screen overflow-hidden bg-black">
+    <div className="w-screen h-screen overflow-hidden">
       <div className="absolute top-0 left-0 w-full z-50">
         <Header isSimple />
       </div>
-      <LeftPanel />
+      <div className="absolute top-0 left-0 w-full z-50">
+        <LeftPanel />
+      </div>
       <Canvas
         camera={{
           fov: 90,
