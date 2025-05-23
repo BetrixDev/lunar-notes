@@ -276,6 +276,8 @@ function ToolButtonGroup() {
 }
 
 function RouteComponent() {
+  const setSelectedTool = useEditorStore((state) => state.setSelectedTool);
+
   const incrementCurrentTime = useEditorStore(
     (state) => state.incrementCurrentTime
   );
@@ -288,6 +290,26 @@ function RouteComponent() {
       incrementCurrentTime(0.1);
     } else if (event.deltaY > 0) {
       decrementCurrentTime(0.1);
+    }
+  });
+
+  useEventListener("keydown", (event) => {
+    if (event.key === "j") {
+      setSelectedTool("select");
+    } else if (event.key === "k") {
+      setSelectedTool("erase");
+    } else if (event.key === "y") {
+      setSelectedTool("addNote");
+    } else if (event.key === "u") {
+      setSelectedTool("starpower");
+    } else if (event.key === "i") {
+      setSelectedTool("metronome");
+    } else if (event.key === "o") {
+      setSelectedTool("timeSignature");
+    } else if (event.key === "p") {
+      setSelectedTool("section");
+    } else if (event.key === "l") {
+      setSelectedTool("event");
     }
   });
 
