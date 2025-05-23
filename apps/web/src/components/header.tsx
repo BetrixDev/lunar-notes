@@ -91,21 +91,16 @@ export function Header({ isSimple = false }: HeaderProps) {
       </div>
 
       {/* Mobile menu toggle */}
-      {!isSimple && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="md:hidden"
-          onClick={toggleMenu}
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-        >
-          {isMenuOpen ? (
-            <X className="w-5 h-5" />
-          ) : (
-            <Menu className="w-5 h-5" />
-          )}
-        </Button>
-      )}
+
+      <Button
+        variant="ghost"
+        size="sm"
+        className="md:hidden"
+        onClick={toggleMenu}
+        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+      >
+        {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </Button>
 
       {/* Desktop Navigation */}
       {!isSimple && (
@@ -120,7 +115,7 @@ export function Header({ isSimple = false }: HeaderProps) {
       </div>
 
       {/* Mobile Menu */}
-      {!isSimple && <MobileMenu isOpen={isMenuOpen} />}
+      <MobileMenu isOpen={isMenuOpen} />
     </header>
   );
 }
