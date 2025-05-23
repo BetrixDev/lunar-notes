@@ -32,6 +32,7 @@ import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useToolStore, type Tool } from "@/stores/tool-store";
 
 const LANE_COLORS = ["#00ff00", "#ff0000", "#ffff00", "#0066ff", "#ff8800"];
 
@@ -186,13 +187,73 @@ function ToolButton({
   );
 }
 
+function ToolButtonGroup() {
+  const selectedTool = useToolStore((state) => state.selectedTool);
+  const setSelectedTool = useToolStore((state) => state.setSelectedTool);
+
+  return (
+    <>
+      <ToolButton
+        icon={<MousePointer2Icon />}
+        label="Select/Move"
+        keyBinding="J"
+        onClick={() => setSelectedTool("select")}
+        isActive={selectedTool === "select"}
+      />
+      <ToolButton
+        icon={<EraserIcon />}
+        label="Erase"
+        keyBinding="K"
+        onClick={() => setSelectedTool("erase")}
+        isActive={selectedTool === "erase"}
+      />
+      <ToolButton
+        icon={<CircleDotIcon />}
+        label="Add Note"
+        keyBinding="Y"
+        onClick={() => setSelectedTool("addNote")}
+        isActive={selectedTool === "addNote"}
+      />
+      <ToolButton
+        icon={<SparklesIcon />}
+        label="Starpower"
+        keyBinding="U"
+        onClick={() => setSelectedTool("starpower")}
+        isActive={selectedTool === "starpower"}
+      />
+      <ToolButton
+        icon={<PyramidIcon />}
+        label="Metronome"
+        keyBinding="I"
+        onClick={() => setSelectedTool("metronome")}
+        isActive={selectedTool === "metronome"}
+      />
+      <ToolButton
+        icon={<ClockIcon />}
+        label="Time Signature"
+        keyBinding="O"
+        onClick={() => setSelectedTool("timeSignature")}
+        isActive={selectedTool === "timeSignature"}
+      />
+      <ToolButton
+        icon={<MenuIcon />}
+        label="Section"
+        keyBinding="P"
+        onClick={() => setSelectedTool("section")}
+        isActive={selectedTool === "section"}
+      />
+      <ToolButton
+        icon={<FlagIcon />}
+        label="Event"
+        keyBinding="L"
+        onClick={() => setSelectedTool("event")}
+        isActive={selectedTool === "event"}
+      />
+    </>
+  );
+}
+
 function RouteComponent() {
-  const [activeTool, setActiveTool] = useState<string>("select");
-
-  const handleToolClick = useCallback((toolName: string) => {
-    setActiveTool(toolName);
-  }, []);
-
   return (
     <div className="w-screen h-screen overflow-hidden">
       <div className="absolute top-0 left-0 w-full z-50 inset-0 flex flex-col">
@@ -259,62 +320,7 @@ function RouteComponent() {
             <LeftPanel label="Stats"></LeftPanel>
             <LeftPanel label="Tools">
               <div className="w-12 border-r h-full bg-background/15 backdrop-blur-md flex flex-col items-center justify-center p-2 gap-2">
-                <ToolButton
-                  icon={<MousePointer2Icon />}
-                  label="Select/Move"
-                  keyBinding="J"
-                  onClick={() => handleToolClick("select")}
-                  isActive={activeTool === "select"}
-                />
-                <ToolButton
-                  icon={<EraserIcon />}
-                  label="Erase"
-                  keyBinding="K"
-                  onClick={() => handleToolClick("erase")}
-                  isActive={activeTool === "erase"}
-                />
-                <ToolButton
-                  icon={<CircleDotIcon />}
-                  label="Add Note"
-                  keyBinding="Y"
-                  onClick={() => handleToolClick("addNote")}
-                  isActive={activeTool === "addNote"}
-                />
-                <ToolButton
-                  icon={<SparklesIcon />}
-                  label="Starpower"
-                  keyBinding="U"
-                  onClick={() => handleToolClick("starpower")}
-                  isActive={activeTool === "starpower"}
-                />
-                <ToolButton
-                  icon={<PyramidIcon />}
-                  label="Metronome"
-                  keyBinding="I"
-                  onClick={() => handleToolClick("metronome")}
-                  isActive={activeTool === "metronome"}
-                />
-                <ToolButton
-                  icon={<ClockIcon />}
-                  label="Time Signature"
-                  keyBinding="O"
-                  onClick={() => handleToolClick("timeSignature")}
-                  isActive={activeTool === "timeSignature"}
-                />
-                <ToolButton
-                  icon={<MenuIcon />}
-                  label="Section"
-                  keyBinding="P"
-                  onClick={() => handleToolClick("section")}
-                  isActive={activeTool === "section"}
-                />
-                <ToolButton
-                  icon={<FlagIcon />}
-                  label="Event"
-                  keyBinding="L"
-                  onClick={() => handleToolClick("event")}
-                  isActive={activeTool === "event"}
-                />
+                <ToolButtonGroup />
               </div>
             </LeftPanel>
           </LeftPanelProvider>
