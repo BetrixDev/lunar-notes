@@ -78,7 +78,7 @@ export function Header({ isSimple = false }: HeaderProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 flex flex-wrap items-center justify-between px-4 py-3 border-b md:px-6 md:h-16 bg-background/50 backdrop-blur-md",
+        "sticky top-0 z-40 flex flex-wrap items-center justify-between border-b px-4 py-3 md:px-6 md:h-16 bg-background/50 backdrop-blur-md",
         isSimple ? "bg-background/50 backdrop-blur-md" : "bg-background"
       )}
     >

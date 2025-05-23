@@ -8,316 +8,24 @@ import {
   DepthOfField,
 } from "@react-three/postprocessing";
 import { Header } from "@/components/header";
+import { ChevronUpIcon } from "lucide-react";
+import type React from "react";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarGroupAction,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Input } from "@/components/ui/input";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { createContext, useCallback, useContext, useState } from "react";
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
-import { useState } from "react";
-import { useForm } from "@tanstack/react-form";
-import type {
-  FormValidateOrFn,
-  FormAsyncValidateOrFn,
-} from "@tanstack/react-form";
-import { z } from "zod";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/editor")({
   component: RouteComponent,
 });
-
-// Collapsible section component
-function CollapsibleSection({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  const [isOpen, setIsOpen] = useState(true);
-
-  return (
-    <div className="mb-4 rounded-md overflow-hidden border border-sidebar-border bg-sidebar/80 backdrop-blur-sm">
-      <button
-        className="w-full px-4 py-3 flex justify-between items-center text-left font-semibold text-lg hover:bg-sidebar-accent/20 transition-colors"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {title}
-        {isOpen ? (
-          <ChevronDownIcon className="h-5 w-5 text-muted-foreground" />
-        ) : (
-          <ChevronRightIcon className="h-5 w-5 text-muted-foreground" />
-        )}
-      </button>
-      {isOpen && <div className="px-4 pb-3 pt-1">{children}</div>}
-    </div>
-  );
-}
-
-// Form type for the song properties
-type SongFormValues = {
-  title: string;
-  artist: string;
-  album: string;
-  year: number | undefined;
-  genre: string;
-  difficulty: number | undefined;
-  charter: string;
-};
-
-function SongPropertiesForm() {
-  const form = useForm({
-    defaultValues: {
-      title: "",
-      artist: "",
-      album: "",
-      year: undefined,
-      genre: "",
-      difficulty: undefined,
-      charter: "",
-    } as SongFormValues,
-    onSubmit: async ({ value }) => {
-      console.log("Form submitted:", value);
-    },
-  });
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        form.handleSubmit();
-      }}
-    >
-      <SidebarMenu className="space-y-3">
-        <form.Field
-          name="title"
-          validators={{
-            onChange: ({ value }) => (!value ? "Title is required" : undefined),
-          }}
-        >
-          {(field) => (
-            <SidebarMenuItem className="space-y-1">
-              <Label htmlFor="title" className="text-sidebar-foreground">
-                Song title
-              </Label>
-              <Input
-                id="title"
-                type="text"
-                className="w-full bg-sidebar-accent/10 border-sidebar-border focus:border-sidebar-primary text-sidebar-foreground placeholder:text-muted-foreground"
-                placeholder="Title"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                onBlur={field.handleBlur}
-              />
-              {field.state.meta.errors && (
-                <div className="text-red-500 text-sm mt-1">
-                  {field.state.meta.errors.join(", ")}
-                </div>
-              )}
-            </SidebarMenuItem>
-          )}
-        </form.Field>
-
-        <form.Field
-          name="artist"
-          validators={{
-            onChange: ({ value }) =>
-              !value ? "Artist is required" : undefined,
-          }}
-        >
-          {(field) => (
-            <SidebarMenuItem className="space-y-1">
-              <Label htmlFor="artist" className="text-sidebar-foreground">
-                Artist
-              </Label>
-              <Input
-                id="artist"
-                type="text"
-                className="w-full bg-sidebar-accent/10 border-sidebar-border focus:border-sidebar-primary text-sidebar-foreground placeholder:text-muted-foreground"
-                placeholder="Artist"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                onBlur={field.handleBlur}
-              />
-              {field.state.meta.errors && (
-                <div className="text-red-500 text-sm mt-1">
-                  {field.state.meta.errors.join(", ")}
-                </div>
-              )}
-            </SidebarMenuItem>
-          )}
-        </form.Field>
-
-        <form.Field name="album">
-          {(field) => (
-            <SidebarMenuItem className="space-y-1">
-              <Label htmlFor="album" className="text-sidebar-foreground">
-                Album
-              </Label>
-              <Input
-                id="album"
-                type="text"
-                className="w-full bg-sidebar-accent/10 border-sidebar-border focus:border-sidebar-primary text-sidebar-foreground placeholder:text-muted-foreground"
-                placeholder="Album"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                onBlur={field.handleBlur}
-              />
-            </SidebarMenuItem>
-          )}
-        </form.Field>
-
-        <form.Field
-          name="year"
-          validators={{
-            onChange: ({ value }) =>
-              value !== undefined &&
-              (value < 1 || value > new Date().getFullYear())
-                ? `Year must be between 1 and ${new Date().getFullYear()}`
-                : undefined,
-          }}
-        >
-          {(field) => (
-            <SidebarMenuItem className="space-y-1">
-              <Label htmlFor="year" className="text-sidebar-foreground">
-                Year
-              </Label>
-              <Input
-                id="year"
-                type="number"
-                className="w-full bg-sidebar-accent/10 border-sidebar-border focus:border-sidebar-primary text-sidebar-foreground placeholder:text-muted-foreground"
-                placeholder="Year"
-                value={field.state.value === undefined ? "" : field.state.value}
-                onChange={(e) => {
-                  const value =
-                    e.target.value === "" ? undefined : Number(e.target.value);
-                  field.handleChange(value);
-                }}
-                onBlur={field.handleBlur}
-              />
-              {field.state.meta.errors && (
-                <div className="text-red-500 text-sm mt-1">
-                  {field.state.meta.errors.join(", ")}
-                </div>
-              )}
-            </SidebarMenuItem>
-          )}
-        </form.Field>
-
-        <form.Field name="genre">
-          {(field) => (
-            <SidebarMenuItem className="space-y-1">
-              <Label htmlFor="genre" className="text-sidebar-foreground">
-                Genre
-              </Label>
-              <Input
-                id="genre"
-                type="text"
-                className="w-full bg-sidebar-accent/10 border-sidebar-border focus:border-sidebar-primary text-sidebar-foreground placeholder:text-muted-foreground"
-                placeholder="Genre"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                onBlur={field.handleBlur}
-              />
-            </SidebarMenuItem>
-          )}
-        </form.Field>
-
-        <form.Field
-          name="difficulty"
-          validators={{
-            onChange: ({ value }) =>
-              value !== undefined && (value < 1 || value > 100)
-                ? "Difficulty must be between 1 and 100"
-                : undefined,
-          }}
-        >
-          {(field) => (
-            <SidebarMenuItem className="space-y-1">
-              <Label htmlFor="difficulty" className="text-sidebar-foreground">
-                Difficulty
-              </Label>
-              <Input
-                id="difficulty"
-                type="number"
-                className="w-full bg-sidebar-accent/10 border-sidebar-border focus:border-sidebar-primary text-sidebar-foreground placeholder:text-muted-foreground"
-                placeholder="Difficulty"
-                value={field.state.value === undefined ? "" : field.state.value}
-                onChange={(e) => {
-                  const value =
-                    e.target.value === "" ? undefined : Number(e.target.value);
-                  field.handleChange(value);
-                }}
-                onBlur={field.handleBlur}
-              />
-              {field.state.meta.errors && (
-                <div className="text-red-500 text-sm mt-1">
-                  {field.state.meta.errors.join(", ")}
-                </div>
-              )}
-            </SidebarMenuItem>
-          )}
-        </form.Field>
-
-        <form.Field name="charter">
-          {(field) => (
-            <SidebarMenuItem className="space-y-1">
-              <Label htmlFor="charter" className="text-sidebar-foreground">
-                Charter
-              </Label>
-              <Input
-                id="charter"
-                type="text"
-                className="w-full bg-sidebar-accent/10 border-sidebar-border focus:border-sidebar-primary text-sidebar-foreground placeholder:text-muted-foreground"
-                placeholder="Charter"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                onBlur={field.handleBlur}
-              />
-            </SidebarMenuItem>
-          )}
-        </form.Field>
-      </SidebarMenu>
-    </form>
-  );
-}
-
-function LeftPanel() {
-  return (
-    <SidebarProvider>
-      <Sidebar className="m-4 mt-20" variant="floating">
-        <SidebarContent className="p-4">
-          <CollapsibleSection title="Song Properties">
-            <SongPropertiesForm />
-          </CollapsibleSection>
-
-          <CollapsibleSection title="Settings">
-            <SidebarMenu>
-              <SidebarMenuItem className="flex items-center gap-2 text-sidebar-foreground">
-                Step: 1 /
-                <Input
-                  type="number"
-                  className="w-16 h-6 bg-sidebar-accent/10 border-sidebar-border focus:border-sidebar-primary text-sidebar-foreground"
-                  value={24}
-                />
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </CollapsibleSection>
-        </SidebarContent>
-      </Sidebar>
-    </SidebarProvider>
-  );
-}
 
 function Highway() {
   const texture = useLoader(THREE.TextureLoader, "/highway.png");
@@ -334,15 +42,146 @@ function Highway() {
   );
 }
 
+const LeftPanelContext = createContext({
+  openPanelId: null as string | null,
+  setOpenPanelId: (id: string | null) => {},
+});
+
+function LeftPanelProvider({ children }: React.PropsWithChildren) {
+  const [openPanelId, setOpenPanelId] = useState<string | null>(null);
+
+  return (
+    <LeftPanelContext.Provider value={{ openPanelId, setOpenPanelId }}>
+      {children}
+    </LeftPanelContext.Provider>
+  );
+}
+
+type LeftPanelProps = React.PropsWithChildren<{
+  label: string;
+}>;
+
+function LeftPanel({ label, children }: LeftPanelProps) {
+  const { openPanelId, setOpenPanelId } = useContext(LeftPanelContext);
+
+  const isOpen = openPanelId === label;
+
+  const handleClick = useCallback(() => {
+    setOpenPanelId(openPanelId === label ? null : label);
+  }, [openPanelId, label, setOpenPanelId]);
+
+  return (
+    <>
+      <TooltipProvider>
+        <Tooltip delayDuration={400}>
+          <TooltipTrigger asChild>
+            <button
+              aria-label={`Open ${label}`}
+              type="button"
+              className={cn(
+                "w-6 hover:w-10 transition-all ease-out duration-300 border-r backdrop-blur-md flex items-center justify-center relative overflow-visible",
+                isOpen && "w-8 border-r-border/35"
+              )}
+              onClick={handleClick}
+            >
+              <p className="rotate-90 whitespace-nowrap tracking-widest font-medium flex items-center gap-2">
+                <ChevronUpIcon
+                  className={cn(
+                    "w-4 h-4 transition-transform ease-out duration-300",
+                    isOpen && "rotate-180"
+                  )}
+                />{" "}
+                {label}
+              </p>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {isOpen ? "Close" : "Open"} {label}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <div
+        className={cn(
+          "max-w-0 transition-all ease-out duration-300 overflow-hidden",
+          isOpen && "max-w-sm"
+        )}
+      >
+        <div className="w-auto h-full">{children}</div>
+      </div>
+    </>
+  );
+}
+
 function RouteComponent() {
   return (
     <div className="w-screen h-screen overflow-hidden">
-      <div className="absolute top-0 left-0 w-full z-50">
+      <div className="absolute top-0 left-0 w-full z-50 inset-0 flex flex-col">
         <Header isSimple />
+        <div className="flex grow">
+          <LeftPanelProvider>
+            <LeftPanel label="Song Properties">
+              <div className="w-64 border-r h-full bg-background/15 backdrop-blur-md flex flex-col">
+                <h1 className="text-xl font-semibold text-center p-1">
+                  Song Properties
+                </h1>
+                <Separator />
+                <div className="flex flex-col justify-between p-2 grow overflow-y-auto">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-1">
+                      <Label htmlFor="title">Title</Label>
+                      <Input id="title" placeholder="Song Title" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <Label htmlFor="artist">Artist</Label>
+                      <Input id="artist" placeholder="Artist" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <Label htmlFor="album">Album</Label>
+                      <Input id="album" placeholder="Album" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <Label htmlFor="year">Year</Label>
+                      <Input
+                        id="year"
+                        placeholder="Year"
+                        type="number"
+                        min={1}
+                        max={new Date().getFullYear()}
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <Label htmlFor="genre">Genre</Label>
+                      <Input id="genre" placeholder="Genre" />
+                    </div>
+                    <p className="text-sm text-muted-foreground text-center mt-2">
+                      Other
+                    </p>
+                    <div className="flex flex-col gap-1">
+                      <Label htmlFor="charter">Charter</Label>
+                      <Input id="charter" placeholder="Charter" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <Label htmlFor="difficulty">Difficulty</Label>
+                      <Input
+                        id="difficulty"
+                        placeholder="Difficulty"
+                        type="number"
+                        min={1}
+                        max={100}
+                      />
+                    </div>
+                  </div>
+                  <Button>Save Changes</Button>
+                </div>
+              </div>
+            </LeftPanel>
+            <LeftPanel label="Song Audio"></LeftPanel>
+            <LeftPanel label="Stats"></LeftPanel>
+            <LeftPanel label="Tools"></LeftPanel>
+          </LeftPanelProvider>
+        </div>
       </div>
-      <div className="absolute top-0 left-0 w-full z-50">
-        <LeftPanel />
-      </div>
+
       <Canvas
         camera={{
           fov: 90,
@@ -361,7 +200,6 @@ function RouteComponent() {
           speed={1}
         />
         <hemisphereLight intensity={1} color="white" groundColor="black" />
-        <fog attach="fog" args={["#0f0e18", 5, 20]} />
         <color attach="background" args={["#0f0e18"]} />
         <ambientLight intensity={0.3} />
         <directionalLight position={[0, 5, 5]} intensity={0.8} />
@@ -375,6 +213,7 @@ function RouteComponent() {
           />
           <DepthOfField focusDistance={0} focalLength={0.02} bokehScale={2} />
         </EffectComposer>
+        <fog attach="fog" args={["#0f0e18", 5, 20]} />
       </Canvas>
     </div>
   );
