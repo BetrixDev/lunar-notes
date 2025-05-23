@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Canvas, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
-import { Stars } from "@react-three/drei";
+import { PerspectiveCamera, Stars } from "@react-three/drei";
 import {
   EffectComposer,
   Bloom,
@@ -35,16 +35,46 @@ function Highway() {
   texture.repeat.set(1, 10);
 
   return (
-    <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+    <mesh position={[0, -0.1, -48]} rotation={[-Math.PI / 2, 0, 0]}>
       <boxGeometry args={[5, 100, 1]} />
       <meshStandardMaterial map={texture} />
     </mesh>
   );
 }
 
+function Hitzones() {
+  const colors = ["#00ff00", "#ff0000", "#ffff00", "#0066ff", "#ff8800"];
+  const spacing = 1;
+  const startX = -2;
+
+  return (
+    <group>
+      {colors.map((color, index) => (
+        <mesh
+          key={index}
+          position={[startX + index * spacing, 0.5, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+        >
+          <circleGeometry args={[0.35, 32]} />
+          <meshStandardMaterial color={color} opacity={1} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function Strikeline() {
+  return (
+    <mesh position={[0, 0.45, 0]} rotation={[0, 0, 0]}>
+      <boxGeometry args={[5, 0.01, 0.1]} />
+      <meshStandardMaterial color="#ffffff" opacity={1} />
+    </mesh>
+  );
+}
+
 const LeftPanelContext = createContext({
   openPanelId: null as string | null,
-  setOpenPanelId: (id: string | null) => {},
+  setOpenPanelId: (_: string | null) => {},
 });
 
 function LeftPanelProvider({ children }: React.PropsWithChildren) {
@@ -182,14 +212,8 @@ function RouteComponent() {
         </div>
       </div>
 
-      <Canvas
-        camera={{
-          fov: 90,
-          near: 0.1,
-          far: 1000,
-          position: [0, 4, 10],
-        }}
-      >
+      <Canvas>
+        <PerspectiveCamera makeDefault position={[0, 3.2, 4]} fov={90} />
         <Stars
           radius={250}
           depth={50}
@@ -204,6 +228,8 @@ function RouteComponent() {
         <ambientLight intensity={0.3} />
         <directionalLight position={[0, 5, 5]} intensity={0.8} />
         <Highway />
+        <Hitzones />
+        <Strikeline />
 
         <EffectComposer multisampling={5}>
           <Bloom
