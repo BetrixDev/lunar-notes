@@ -23,7 +23,6 @@ import type React from "react";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { createContext, useCallback, useContext, useState } from "react";
@@ -32,7 +31,8 @@ import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToolStore, type Tool } from "@/stores/tool-store";
+import { useEditorStore } from "@/stores/editor-store";
+import { useEventListener } from "usehooks-ts";
 
 const LANE_COLORS = ["#00ff00", "#ff0000", "#ffff00", "#0066ff", "#ff8800"];
 
@@ -42,13 +42,20 @@ export const Route = createFileRoute("/editor")({
 
 function Highway() {
   const texture = useLoader(THREE.TextureLoader, "/highway.png");
+  const currentTime = useEditorStore((state) => state.currentTime);
+  const speed = useEditorStore((state) => state.speed);
+  const hyperspeed = useEditorStore((state) => state.hyperspeed);
 
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(1, 10);
 
+  // Move the highway based on current time with speed multipliers
+  const totalSpeedMultiplier = speed * hyperspeed;
+  const zPosition = -48 + currentTime * 10 * totalSpeedMultiplier;
+
   return (
-    <mesh position={[0, -0.1, -48]} rotation={[-Math.PI / 2, 0, 0]}>
+    <mesh position={[0, -0.1, zPosition]} rotation={[-Math.PI / 2, 0, 0]}>
       <boxGeometry args={[5, 100, 1]} />
       <meshStandardMaterial map={texture} />
     </mesh>
@@ -188,8 +195,8 @@ function ToolButton({
 }
 
 function ToolButtonGroup() {
-  const selectedTool = useToolStore((state) => state.selectedTool);
-  const setSelectedTool = useToolStore((state) => state.setSelectedTool);
+  const selectedTool = useEditorStore((state) => state.selectedTool);
+  const setSelectedTool = useEditorStore((state) => state.setSelectedTool);
 
   return (
     <>
@@ -254,6 +261,21 @@ function ToolButtonGroup() {
 }
 
 function RouteComponent() {
+  const incrementCurrentTime = useEditorStore(
+    (state) => state.incrementCurrentTime
+  );
+  const decrementCurrentTime = useEditorStore(
+    (state) => state.decrementCurrentTime
+  );
+
+  useEventListener("wheel", (event) => {
+    if (event.deltaY < 0) {
+      incrementCurrentTime(0.1);
+    } else if (event.deltaY > 0) {
+      decrementCurrentTime(0.1);
+    }
+  });
+
   return (
     <div className="w-screen h-screen overflow-hidden">
       <div className="absolute top-0 left-0 w-full z-50 inset-0 flex flex-col">
