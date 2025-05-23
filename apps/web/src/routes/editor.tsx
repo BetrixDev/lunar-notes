@@ -109,15 +109,15 @@ function LeftPanel({ label, children }: LeftPanelProps) {
               aria-label={`Open ${label}`}
               type="button"
               className={cn(
-                "w-6 hover:w-10 transition-all ease-out duration-300 border-r backdrop-blur-md flex items-center justify-center relative overflow-visible",
-                isOpen && "w-8 border-r-border/35"
+                "w-6 hover:w-10 hover:bg-secondary/15 transition-all ease-out duration-300 border-r backdrop-blur-md flex items-center justify-center relative overflow-visible",
+                isOpen && "w-8 border-r-border/35 bg-secondary/25"
               )}
               onClick={handleClick}
             >
               <p className="rotate-90 whitespace-nowrap tracking-widest font-medium flex items-center gap-2">
                 <ChevronUpIcon
                   className={cn(
-                    "w-4 h-4 transition-transform ease-out duration-300",
+                    "w-4 h-4 transition-transform ease-out duration-500",
                     isOpen && "rotate-180"
                   )}
                 />{" "}
@@ -132,7 +132,7 @@ function LeftPanel({ label, children }: LeftPanelProps) {
       </TooltipProvider>
       <div
         className={cn(
-          "max-w-0 transition-all ease-out duration-300 overflow-hidden",
+          "max-w-0 transition-all ease-out duration-500 overflow-hidden",
           isOpen && "max-w-sm"
         )}
       >
