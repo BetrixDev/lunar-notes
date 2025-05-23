@@ -8,7 +8,17 @@ import {
   DepthOfField,
 } from "@react-three/postprocessing";
 import { Header } from "@/components/header";
-import { ChevronUpIcon } from "lucide-react";
+import {
+  ChevronUpIcon,
+  CircleDotIcon,
+  ClockIcon,
+  EraserIcon,
+  FlagIcon,
+  MenuIcon,
+  MousePointer2Icon,
+  PyramidIcon,
+  SparklesIcon,
+} from "lucide-react";
 import type React from "react";
 import {
   Tooltip,
@@ -102,37 +112,36 @@ function LeftPanel({ label, children }: LeftPanelProps) {
 
   return (
     <>
-      <TooltipProvider>
-        <Tooltip delayDuration={400}>
-          <TooltipTrigger asChild>
-            <button
-              aria-label={`Open ${label}`}
-              type="button"
-              className={cn(
-                "w-6 hover:w-10 hover:bg-secondary/15 transition-all ease-out duration-300 border-r backdrop-blur-md flex items-center justify-center relative overflow-visible",
-                isOpen && "w-8 border-r-border/35 bg-secondary/25"
-              )}
-              onClick={handleClick}
-            >
-              <p className="rotate-90 whitespace-nowrap tracking-widest font-medium flex items-center gap-2">
-                <ChevronUpIcon
-                  className={cn(
-                    "w-4 h-4 transition-transform ease-out duration-500",
-                    isOpen && "rotate-180"
-                  )}
-                />{" "}
-                {label}
-              </p>
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>
-            {isOpen ? "Close" : "Open"} {label}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip delayDuration={400}>
+        <TooltipTrigger asChild>
+          <button
+            aria-label={`Open ${label}`}
+            type="button"
+            className={cn(
+              "w-6 hover:w-10 hover:bg-secondary/15 transition-all ease-out duration-300 border-r backdrop-blur-md flex items-center justify-center relative overflow-visible",
+              isOpen && "w-8 border-r-border/35 bg-secondary/25"
+            )}
+            onClick={handleClick}
+          >
+            <p className="rotate-90 whitespace-nowrap tracking-widest font-medium flex items-center gap-2">
+              <ChevronUpIcon
+                className={cn(
+                  "w-4 h-4 transition-transform ease-out duration-500",
+                  isOpen && "rotate-180"
+                )}
+              />{" "}
+              {label}
+            </p>
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          {isOpen ? "Close" : "Open"} {label}
+        </TooltipContent>
+      </Tooltip>
+
       <div
         className={cn(
-          "max-w-0 transition-all ease-out duration-500 overflow-hidden",
+          "max-w-0 transition-all ease-in-out duration-50 overflow-hidden",
           isOpen && "max-w-sm"
         )}
       >
@@ -142,7 +151,47 @@ function LeftPanel({ label, children }: LeftPanelProps) {
   );
 }
 
+type ToolButtonProps = {
+  icon: React.ReactNode;
+  label: string;
+  keyBinding: string;
+  onClick: () => void;
+  isActive?: boolean;
+};
+
+function ToolButton({
+  icon,
+  label,
+  keyBinding,
+  onClick,
+  isActive = false,
+}: ToolButtonProps) {
+  return (
+    <Tooltip delayDuration={400}>
+      <TooltipTrigger asChild>
+        <Button
+          variant={isActive ? "default" : "outline"}
+          size="icon"
+          onClick={onClick}
+        >
+          {icon}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent className="flex flex-col gap-1">
+        <span>{label}</span>
+        <span>Key: {keyBinding}</span>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 function RouteComponent() {
+  const [activeTool, setActiveTool] = useState<string>("select");
+
+  const handleToolClick = useCallback((toolName: string) => {
+    setActiveTool(toolName);
+  }, []);
+
   return (
     <div className="w-screen h-screen overflow-hidden">
       <div className="absolute top-0 left-0 w-full z-50 inset-0 flex flex-col">
@@ -207,7 +256,66 @@ function RouteComponent() {
             </LeftPanel>
             <LeftPanel label="Song Audio"></LeftPanel>
             <LeftPanel label="Stats"></LeftPanel>
-            <LeftPanel label="Tools"></LeftPanel>
+            <LeftPanel label="Tools">
+              <div className="w-12 border-r h-full bg-background/15 backdrop-blur-md flex flex-col items-center justify-center p-2 gap-2">
+                <ToolButton
+                  icon={<MousePointer2Icon />}
+                  label="Select/Move"
+                  keyBinding="J"
+                  onClick={() => handleToolClick("select")}
+                  isActive={activeTool === "select"}
+                />
+                <ToolButton
+                  icon={<EraserIcon />}
+                  label="Erase"
+                  keyBinding="K"
+                  onClick={() => handleToolClick("erase")}
+                  isActive={activeTool === "erase"}
+                />
+                <ToolButton
+                  icon={<CircleDotIcon />}
+                  label="Add Note"
+                  keyBinding="Y"
+                  onClick={() => handleToolClick("addNote")}
+                  isActive={activeTool === "addNote"}
+                />
+                <ToolButton
+                  icon={<SparklesIcon />}
+                  label="Starpower"
+                  keyBinding="U"
+                  onClick={() => handleToolClick("starpower")}
+                  isActive={activeTool === "starpower"}
+                />
+                <ToolButton
+                  icon={<PyramidIcon />}
+                  label="Metronome"
+                  keyBinding="I"
+                  onClick={() => handleToolClick("metronome")}
+                  isActive={activeTool === "metronome"}
+                />
+                <ToolButton
+                  icon={<ClockIcon />}
+                  label="Time Signature"
+                  keyBinding="O"
+                  onClick={() => handleToolClick("timeSignature")}
+                  isActive={activeTool === "timeSignature"}
+                />
+                <ToolButton
+                  icon={<MenuIcon />}
+                  label="Section"
+                  keyBinding="P"
+                  onClick={() => handleToolClick("section")}
+                  isActive={activeTool === "section"}
+                />
+                <ToolButton
+                  icon={<FlagIcon />}
+                  label="Event"
+                  keyBinding="L"
+                  onClick={() => handleToolClick("event")}
+                  isActive={activeTool === "event"}
+                />
+              </div>
+            </LeftPanel>
           </LeftPanelProvider>
         </div>
       </div>
@@ -239,7 +347,7 @@ function RouteComponent() {
           />
           <DepthOfField focusDistance={0} focalLength={0.02} bokehScale={2} />
         </EffectComposer>
-        <fog attach="fog" args={["#0f0e18", 5, 20]} />
+        <fog attach="fog" args={["#0f0e18", 5, 25]} />
       </Canvas>
     </div>
   );

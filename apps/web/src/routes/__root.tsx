@@ -12,6 +12,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import "../index.css";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export interface RouterAppContext {
   trpc: typeof trpc;
@@ -49,10 +50,12 @@ function RootComponent() {
     <>
       <HeadContent />
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <div className="grid grid-rows-[auto_1fr] h-svh">
-          {isFetching ? <Loader /> : <Outlet />}
-        </div>
-        <Toaster richColors />
+        <TooltipProvider>
+          <div className="grid grid-rows-[auto_1fr] h-svh">
+            {isFetching ? <Loader /> : <Outlet />}
+          </div>
+          <Toaster richColors />
+        </TooltipProvider>
       </ThemeProvider>
       <TanStackRouterDevtools position="bottom-left" />
       <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
