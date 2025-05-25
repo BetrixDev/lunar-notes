@@ -106,6 +106,43 @@ function Strikeline() {
   );
 }
 
+function FretLines() {
+  const currentTime = useEditorStore((state) => state.currentTime);
+  const speed = useEditorStore((state) => state.speed);
+  const hyperspeed = useEditorStore((state) => state.hyperspeed);
+
+  const bpm = 120; // Assuming 120 BPM
+  const beatsPerSecond = bpm / 60; // 2 beats per second
+  const totalSpeedMultiplier = speed * hyperspeed;
+
+  // Calculate offset like the highway does
+  const offset = currentTime * 10 * totalSpeedMultiplier;
+
+  // Distance between fret lines (one per beat)
+  // Highway moves 10 units per second, so 5 units per beat for 120 BPM
+  const beatSpacing = 10 / beatsPerSecond; // 5 units per beat
+
+  const lines = [];
+  const numberOfLines = 30; // Render 30 lines total
+
+  for (let i = -15; i < numberOfLines - 15; i++) {
+    const lineZ = -48 + i * beatSpacing + (offset % beatSpacing);
+
+    lines.push(
+      <mesh
+        key={`fret-line-${i}`}
+        position={[0, 0.5, lineZ]} // Slightly above the highway
+        rotation={[-Math.PI / 2, 0, 0]}
+      >
+        <boxGeometry args={[5, 0.05, 0.01]} />
+        <meshStandardMaterial color="#ffffff" opacity={0.6} transparent />
+      </mesh>
+    );
+  }
+
+  return <group>{lines}</group>;
+}
+
 const LeftPanelContext = createContext({
   openPanelId: null as string | null,
   setOpenPanelId: (_: string | null) => {},
@@ -409,6 +446,7 @@ function RouteComponent() {
         <Highway />
         <Hitzones />
         <Strikeline />
+        <FretLines />
 
         <EffectComposer multisampling={5}>
           <Bloom
